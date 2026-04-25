@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成长操作系统</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg2: #F4F3EF;
+    --bg3: #EDECE7;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1A1A18;
+    --text2: #6B6B67;
+    --text3: #9E9E99;
+    --radius: 14px;
+    --radius-sm: 8px;
+
+    --teal: #0F6E56;
+    --teal-mid: #1D9E75;
+    --teal-light: #C5EADf;
+    --teal-bg: #EBF7F2;
+
+    --blue: #185FA5;
+    --blue-mid: #378ADD;
+    --blue-light: #BDD8F5;
+    --blue-bg: #EBF3FC;
+
+    --amber: #7A4A08;
+    --amber-mid: #C47E1A;
+    --amber-light: #FAD896;
+    --amber-bg: #FEF5E4;
+
+    --pink: #7A2040;
+    --pink-mid: #C94E72;
+    --pink-light: #F5BAD0;
+    --pink-bg: #FDE8EF;
+
+    --green-heat: #5FAD3E;
+    --fire: #D97C14;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    max-width: 720px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── COVER ─────────────────────────────── */
+  .cover {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 14px;
+    animation: fadeUp .5s ease both;
+  }
+
+  .mosaic {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 42px);
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+
+  .tile {
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    transition: transform .15s;
+  }
+  .tile:hover { transform: scale(1.04); }
+  .tA { background:#EEEDFE; color:#3C3489; grid-column:span 2; grid-row:span 2; font-family:'DM Serif Display',serif; font-size:26px; }
+  .tB { background:#E1F5EE; color:#085041; }
+  .tC { background:#FAEEDA; color:#633806; grid-column:span 2; }
+  .tD { background:#FCEBEB; color:#A32D2D; }
+  .tE { background:#E6F1FB; color:#0C447C; grid-column:span 3; }
+  .tF { background:#EAF3DE; color:#27500A; }
+  .tG { background:#FBEAF0; color:#72243E; grid-column:span 2; }
+  .tH { background:#F1EFE8; color:#4A4A46; grid-column:span 2; }
+  .tI { background:#EEEDFE; color:#3C3489; }
+  .tJ { background:#FAEEDA; color:#6B3E08; grid-column:span 3; font-size:10px; letter-spacing:.03em; text-align:center; padding:0 8px; }
+
+  .quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.65;
+    margin-bottom: 6px;
+  }
+  .quote-sub { font-size: 12px; color: var(--text2); }
+  .quote-sub strong { color: var(--text); font-weight: 500; }
+
+  .id-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .id-card {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 13px;
+  }
+  .id-label {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .id-val { font-size: 12px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+  /* ── SECTION LABEL ────────────────────── */
+  .sec {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 11px;
+  }
+
+  .divider { height: 0.5px; background: var(--border); margin: 18px 0; }
+
+  /* ── RING CARDS ───────────────────────── */
+  .returns-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .rc {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+    animation: fadeUp .5s ease both;
+  }
+  .rc:hover { transform: translateY(-2px); border-color: var(--border2); }
+  .rc.active { border-width: 1.5px; }
+
+  .ring-wrap {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 9px;
+  }
+  .ring-wrap svg {
+    width: 68px;
+    height: 68px;
+    transform: rotate(-90deg);
+  }
+  .ring-track { fill: none; stroke-width: 6; }
+  .ring-fill  { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .8s cubic-bezier(.4,0,.2,1); }
+  .ring-pct {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .rc-name { font-size: 12px; font-weight: 500; color: var(--text); text-align: center; margin-bottom: 2px; }
+  .rc-sub  { font-size: 10px; color: var(--text3); text-align: center; }
+
+  /* ── DETAIL PANEL ─────────────────────── */
+  .detail-panel {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .4s ease, padding .3s ease, margin .3s ease, opacity .3s ease;
+    opacity: 0;
+    margin-bottom: 0;
+  }
+  .detail-panel.open {
+    max-height: 400px;
+    padding: 16px;
+    opacity: 1;
+    margin-bottom: 12px;
+  }
+  .dp-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .dp-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .dp-pct  { font-size: 22px; font-weight: 500; }
+
+  .sg-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 9px;
+  }
+  .sg-name { font-size: 12px; color: var(--text2); min-width: 64px; }
+  .sg-bar-bg {
+    flex: 1;
+    height: 5px;
+    background: var(--bg3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .sg-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .sg-frac { font-size: 11px; color: var(--text3); min-width: 30px; text-align: right; }
+
+  .plus-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 7px;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    border-radius: var(--radius-sm);
+    border: 0.5px dashed var(--border2);
+    background: none;
+    color: var(--text3);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .plus-btn:hover { background: var(--bg2); color: var(--text2); }
+
+  /* ── INPUT ZONES ──────────────────────── */
+  .input-zone {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    animation: fadeUp .5s ease .1s both;
+  }
+  .iz-meta { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .chip {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border2);
+    background: var(--bg2);
+    color: var(--text2);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip:hover { background: #EBF3FC; color: var(--blue); border-color: #BDD8F5; }
+
+  textarea {
+    width: 100%;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--bg2);
+    resize: none;
+    min-height: 80px;
+    outline: none;
+    transition: border-color .15s, background .15s;
+    line-height: 1.6;
+  }
+  textarea:focus { border-color: #85B7EB; background: white; }
+  textarea::placeholder { color: var(--text3); }
+
+  .iz-footer { display: flex; align-items: center; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
+
+  select {
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 9px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border2);
+    background: var(--bg2);
+    color: var(--text2);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .smt {
+    margin-left: auto;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border2);
+    background: white;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .smt:hover { background: var(--bg3); }
+
+  .db-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 11px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s, color .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .db-link:hover { background: var(--bg2); color: var(--text2); }
+
+  /* ── STREAK ───────────────────────────── */
+  .streak-row {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 8px;
+    margin-bottom: 0;
+  }
+  .sk-card {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    animation: fadeUp .5s ease .2s both;
+  }
+  .sk-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+  .sk-num { font-size: 36px; font-weight: 300; color: var(--text); line-height: 1; }
+  .sk-lbl { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .sk-stats { text-align: right; }
+  .sk-stat-val { font-size: 12px; font-weight: 500; color: var(--text); }
+  .sk-stat-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  .checkin-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    transition: background .15s;
+  }
+  .checkin-item:hover { background: var(--bg2); }
+  .ci-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background .2s;
+  }
+  .ci-label { font-size: 12px; color: var(--text2); min-width: 52px; }
+  .ci-bar-bg { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .ci-bar-fill { height: 100%; border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+  .ci-status { font-size: 11px; color: var(--text3); min-width: 16px; text-align: right; }
+
+  .combo-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 8px 4px;
+    margin-top: 4px;
+    border-top: 0.5px solid var(--border);
+  }
+  .combo-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    transition: all .3s;
+  }
+  .combo-icon.lit { border-color: transparent; }
+  .combo-sep { font-size: 10px; color: var(--text3); }
+  .combo-fire { font-size: 20px; transition: opacity .3s, transform .3s; margin-left: 2px; }
+  .combo-msg { font-size: 11px; color: var(--text3); flex: 1; }
+
+  /* ── HEATMAP ──────────────────────────── */
+  .hmap-card {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    animation: fadeUp .5s ease .2s both;
+  }
+  .hmap-title { font-size: 11px; font-weight: 500; color: var(--text2); margin-bottom: 10px; }
+  .hmap-grid {
+    display: grid;
+    grid-template-columns: repeat(13, 1fr);
+    gap: 3px;
+    margin-bottom: 9px;
+  }
+  .hc {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--bg3);
+    transition: transform .1s;
+    cursor: default;
+  }
+  .hc:hover { transform: scale(1.2); }
+  .hc.l1 { background: #C8E6B0; }
+  .hc.l2 { background: #7DC860; }
+  .hc.l3 { background: #3B8C22; }
+  .hc.lf { background: #D97C14; }
+  .hmap-legend { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text3); }
+  .hl { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── BRAIN ────────────────────────────── */
+  .brain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .bi {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px;
+    animation: fadeUp .5s ease .15s both;
+  }
+  .bi-head { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 6px; }
+  .priority-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .bi-title { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; }
+  .bi-cat {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .bi-desc { font-size: 11px; color: var(--text2); line-height: 1.5; margin-bottom: 8px; }
+  .cvt-btn {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border2);
+    background: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background .15s, color .15s;
+  }
+  .cvt-btn:hover { background: #EBF3FC; color: var(--blue); border-color: #BDD8F5; }
+  .new-idea {
+    border: 0.5px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    min-height: 100px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--text3);
+    transition: background .15s, color .15s;
+    font-family: 'DM Sans', sans-serif;
+    background: none;
+    width: 100%;
+  }
+  .new-idea:hover { background: var(--bg2); color: var(--text2); }
+  .new-idea-icon { font-size: 18px; }
+
+  /* ── TOAST ────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    z-index: 99;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── ANIMATIONS ───────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 编辑面板 */
+  .edit-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+  }
+  .edit-overlay.open { display: flex; }
+  .edit-box {
+    background: white;
+    border-radius: var(--radius);
+    padding: 22px;
+    width: 340px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .edit-title { font-size: 14px; font-weight: 500; margin-bottom: 16px; }
+  .edit-field { margin-bottom: 12px; }
+  .edit-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .edit-input {
+    width: 100%;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--bg2);
+    outline: none;
+  }
+  .edit-input:focus { border-color: #85B7EB; background: white; }
+  .edit-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+  .edit-cancel { font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: none; color: var(--text2); cursor: pointer; font-family: 'DM Sans',sans-serif; }
+  .edit-save { font-size: 12px; font-weight: 500; padding: 6px 16px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--text); color: white; cursor: pointer; font-family: 'DM Sans',sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="mosaic">
+    <div class="tile tA">稳</div>
+    <div class="tile tB">成长</div>
+    <div class="tile tC">财富自由</div>
+    <div class="tile tD">健康</div>
+    <div class="tile tE">成为最好的自己</div>
+    <div class="tile tF">连接</div>
+    <div class="tile tG">思考者</div>
+    <div class="tile tH">执行者</div>
+    <div class="tile tI">专注</div>
+    <div class="tile tJ">每一天都是数据，每一天都在复利</div>
+  </div>
+  <div class="quote">"你不是在努力变好，<br>你是在成为你本来应该是的样子。"</div>
+  <div class="quote-sub" id="cover-meta"></div>
+  <div class="id-row">
+    <div class="id-card"><div class="id-label">愿景</div><div class="id-val" id="vision-txt">稳重、清醒、有力量</div></div>
+    <div class="id-card"><div class="id-label">理想画像</div><div class="id-val" id="ideal-txt">身心 · 认知 · 财富 · 关系</div></div>
+    <div class="id-card"><div class="id-label">今日宣言</div><div class="id-val" id="mantra-txt">每次复盘都是把混沌变秩序</div></div>
+  </div>
+</div>
+
+<!-- RETURNS -->
+<div class="sec">四大回报 · 点击查看子目标</div>
+<div class="returns-grid" id="returns-grid"></div>
+
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-head">
+    <div class="dp-name" id="dp-name">—</div>
+    <div class="dp-pct" id="dp-pct">—</div>
+  </div>
+  <div id="dp-goals"></div>
+  <button class="plus-btn" id="dp-add">+ 新增小目标 · 打开 Notion 目标数据库</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- REVIEW -->
+<div class="sec">今日复盘</div>
+<div class="input-zone">
+  <div class="iz-meta" id="review-date"></div>
+  <div class="chips">
+    <span class="chip" onclick="fillReview('今天我意识到了一件事：')">认知觉察</span>
+    <span class="chip" onclick="fillReview('我原来以为…但现在我觉得…')">思想转变</span>
+    <span class="chip" onclick="fillReview('今天让我困惑的是：')">困惑提问</span>
+    <span class="chip" onclick="fillReview('今天的情绪是…原因是…')">情绪复盘</span>
+    <span class="chip" onclick="fillReview('一个值得深思的问题：')">哲学思考</span>
+  </div>
+  <textarea id="review-ta" placeholder="写下今天的感悟、觉察、或一个让你思考的问题…" rows="4"></textarea>
+  <div class="iz-footer">
+    <select id="review-cat">
+      <option>认知</option><option>价值观</option><option>情绪</option><option>哲学</option><option>人际</option>
+    </select>
+    <select id="review-status">
+      <option>待整理</option><option>待回复</option><option>已更新</option>
+    </select>
+    <button class="smt" onclick="submitReview()">记录 →</button>
+  </div>
+</div>
+<a class="db-link" href="#" onclick="return false">查看复盘历史 → 复盘数据库</a>
+
+<div class="divider"></div>
+
+<!-- STREAK -->
+<div class="sec">今日打卡</div>
+<div class="streak-row">
+  <div class="sk-card">
+    <div class="sk-top">
+      <div>
+        <div class="sk-num" id="sk-num">7</div>
+        <div class="sk-lbl">连续天数</div>
+      </div>
+      <div class="sk-stats">
+        <div class="sk-stat-val" id="sk-best">本月最长 11天</div>
+        <div class="sk-stat-sub" id="sk-week">本周 5 火焰</div>
+      </div>
+    </div>
+    <div id="checkins"></div>
+    <div class="combo-bar">
+      <div class="combo-icon" id="cb-p">📋</div>
+      <div class="combo-sep">+</div>
+      <div class="combo-icon" id="cb-c">✅</div>
+      <div class="combo-sep">+</div>
+      <div class="combo-icon" id="cb-r">📝</div>
+      <div class="combo-sep">=</div>
+      <div class="combo-fire" id="cb-fire" style="opacity:.25">🔥</div>
+      <div class="combo-msg" id="cb-msg">还差 2 项</div>
+    </div>
+  </div>
+  <div class="hmap-card">
+    <div class="hmap-title">过去 91 天</div>
+    <div class="hmap-grid" id="hmap"></div>
+    <div class="hmap-legend">
+      <div class="hl" style="background:var(--bg3)"></div>空
+      <div class="hl hc l1"></div>Plan
+      <div class="hl hc l2"></div>+Check
+      <div class="hl hc l3"></div>全完成
+      <div class="hl hc lf"></div>🔥
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BRAINSTORM -->
+<div class="sec">灵感 · 快速记录</div>
+<div class="input-zone">
+  <textarea id="idea-ta" placeholder="随手记下想法、搞钱点子、改进方案…" rows="3"></textarea>
+  <div class="iz-footer">
+    <select><option>搞钱</option><option>改进自己</option><option>系统优化</option><option>其他</option></select>
+    <select><option>🔴 高优先</option><option>🟡 中优先</option><option>🟢 低优先</option></select>
+    <button class="smt" onclick="submitIdea()">记录 →</button>
+  </div>
+</div>
+<div class="brain-grid">
+  <div class="bi">
+    <div class="bi-head"><div class="priority-dot" style="background:#E24B4A"></div><div class="bi-title">做 Notion 模板卖给有同样需求的人</div></div>
+    <div class="bi-cat" style="background:#FCEBEB;color:#A32D2D">搞钱</div>
+    <div class="bi-desc">包装成产品在 Gumroad 出售，测试市场反应</div>
+    <button class="cvt-btn">转为任务 →</button>
+  </div>
+  <div class="bi">
+    <div class="bi-head"><div class="priority-dot" style="background:#EF9F27"></div><div class="bi-title">30天冷接触实验 · 测试销售转化率</div></div>
+    <div class="bi-cat" style="background:#FAEEDA;color:#7A4A08">改进自己</div>
+    <div class="bi-desc">每天联系3个潜在合作方，30天后分析数据</div>
+    <button class="cvt-btn">转为任务 →</button>
+  </div>
+  <button class="new-idea" onclick="document.getElementById('idea-ta').focus()">
+    <div class="new-idea-icon">+</div>
+    <div>快速记录新想法</div>
+  </button>
+  <a class="db-link" href="#" onclick="return false" style="display:flex;align-items:center;justify-content:center;min-height:100px;text-decoration:none">查看所有灵感 →</a>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- 编辑封面弹窗 -->
+<div class="edit-overlay" id="edit-overlay" onclick="closeEdit(event)">
+  <div class="edit-box">
+    <div class="edit-title">编辑封面信息</div>
+    <div class="edit-field"><div class="edit-label">愿景</div><input class="edit-input" id="e-vision" type="text"></div>
+    <div class="edit-field"><div class="edit-label">理想画像</div><input class="edit-input" id="e-ideal" type="text"></div>
+    <div class="edit-field"><div class="edit-label">今日宣言</div><input class="edit-input" id="e-mantra" type="text"></div>
+    <div class="edit-actions">
+      <button class="edit-cancel" onclick="closeEdit()">取消</button>
+      <button class="edit-save" onclick="saveEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑进度弹窗 -->
+<div class="edit-overlay" id="prog-overlay" onclick="closeProgEdit(event)">
+  <div class="edit-box">
+    <div class="edit-title" id="pe-title">更新进度</div>
+    <div class="edit-field"><div class="edit-label">已完成次数</div><input class="edit-input" id="pe-done" type="number" min="0"></div>
+    <div class="edit-field"><div class="edit-label">目标次数</div><input class="edit-input" id="pe-total" type="number" min="1"></div>
+    <div class="edit-actions">
+      <button class="edit-cancel" onclick="closeProgEdit()">取消</button>
+      <button class="edit-save" onclick="saveProgEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────
+const returns = [
+  { key:'body', name:'身心回报', sub:'情绪 · 身体 · 能量', pct:23, color:'#0F6E56', track:'#C5EADf',
+    goals:[{n:'情绪控制',done:4,total:10,c:'#1D9E75'},{n:'身材管理',done:2,total:10,c:'#5DCAA5'},{n:'睡眠质量',done:1,total:10,c:'#9FE1CB'}] },
+  { key:'mind', name:'认知回报', sub:'思维 · 知识 · 判断力', pct:31, color:'#185FA5', track:'#BDD8F5',
+    goals:[{n:'阅读积累',done:6,total:10,c:'#185FA5'},{n:'输出复盘',done:7,total:10,c:'#378ADD'},{n:'第一原理',done:0,total:10,c:'#85B7EB'}] },
+  { key:'wealth', name:'财富回报', sub:'收入 · 资产 · 副业', pct:12, color:'#7A4A08', track:'#FAD896',
+    goals:[{n:'副业收入',done:2,total:10,c:'#C47E1A'},{n:'投资认知',done:1,total:10,c:'#EF9F27'}] },
+  { key:'social', name:'人际回报', sub:'关系 · 影响力 · 社群', pct:18, color:'#7A2040', track:'#F5BAD0',
+    goals:[{n:'主动联系',done:4,total:10,c:'#C94E72'},{n:'有效倾听',done:3,total:10,c:'#E890AE'}] }
+];
+
+const checkinData = [
+  { label:'Plan',      color:'#1D9E75', done:true,  dotId:'cb-p' },
+  { label:'Checklist', color:'#378ADD', done:false, dotId:'cb-c' },
+  { label:'复盘',      color:'#7F77DD', done:false, dotId:'cb-r' }
+];
+
+// ── INIT DATE ───────────────────────────────────
+const now = new Date();
+const days = ['日','一','二','三','四','五','六'];
+document.getElementById('cover-meta').innerHTML =
+  `今天是你的第 <strong>${daysSinceStart()}</strong> 天 · ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${days[now.getDay()]}`;
+document.getElementById('review-date').textContent =
+  `今日复盘 · ${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+
+function daysSinceStart() {
+  const start = new Date('2026-01-01');
+  return Math.floor((now - start) / 86400000) + 1;
+}
+
+// ── RING CARDS ──────────────────────────────────
+const C = 2 * Math.PI * 27; // r=27
+const grid = document.getElementById('returns-grid');
+let activeKey = null;
+
+returns.forEach((r, i) => {
+  const offset = C - (r.pct / 100) * C;
+  const card = document.createElement('div');
+  card.className = 'rc';
+  card.id = 'rc-' + r.key;
+  card.style.animationDelay = (i * 0.07) + 's';
+  card.innerHTML = `
+    <div class="ring-wrap">
+      <svg viewBox="0 0 68 68">
+        <circle class="ring-track" cx="34" cy="34" r="27" stroke="${r.track}"/>
+        <circle class="ring-fill" id="rf-${r.key}" cx="34" cy="34" r="27" stroke="${r.color}"
+          stroke-dasharray="${C}" stroke-dashoffset="${C}"/>
+      </svg>
+      <div class="ring-pct" style="color:${r.color}" id="rp-${r.key}">${r.pct}%</div>
+    </div>
+    <div class="rc-name">${r.name}</div>
+    <div class="rc-sub">${r.sub}</div>`;
+  card.onclick = () => toggleDetail(r.key);
+  grid.appendChild(card);
+});
+
+// animate rings after paint
+setTimeout(() => {
+  returns.forEach(r => {
+    const offset = C - (r.pct / 100) * C;
+    document.getElementById('rf-' + r.key).style.strokeDashoffset = offset;
+  });
+}, 100);
+
+// ── DETAIL PANEL ────────────────────────────────
+let editingGoal = null;
+
+function toggleDetail(key) {
+  const panel = document.getElementById('detail-panel');
+  if (activeKey === key) {
+    panel.classList.remove('open');
+    activeKey = null;
+    document.querySelectorAll('.rc').forEach(c => { c.classList.remove('active'); c.style.borderColor = ''; });
+    return;
+  }
+  activeKey = key;
+  document.querySelectorAll('.rc').forEach(c => { c.classList.remove('active'); c.style.borderColor = ''; });
+  const rc = document.getElementById('rc-' + key);
+  const r = returns.find(x => x.key === key);
+  rc.classList.add('active');
+  rc.style.borderColor = r.color;
+
+  document.getElementById('dp-name').textContent = r.name;
+  document.getElementById('dp-pct').textContent = r.pct + '%';
+  document.getElementById('dp-pct').style.color = r.color;
+  document.getElementById('dp-add').onclick = () => showToast('请在 Notion 目标数据库中新增小目标');
+
+  const goalsEl = document.getElementById('dp-goals');
+  goalsEl.innerHTML = '';
+  r.goals.forEach((g, gi) => {
+    const pct = Math.round(g.done / g.total * 100);
+    const row = document.createElement('div');
+    row.className = 'sg-row';
+    row.style.cursor = 'pointer';
+    row.title = '点击更新进度';
+    row.innerHTML = `
+      <div class="sg-name">${g.n}</div>
+      <div class="sg-bar-bg"><div class="sg-bar-fill" id="sgf-${key}-${gi}" style="width:0%;background:${g.c}"></div></div>
+      <div class="sg-frac">${g.done}/${g.total}</div>`;
+    row.onclick = () => openProgEdit(key, gi);
+    goalsEl.appendChild(row);
+    setTimeout(() => {
+      document.getElementById(`sgf-${key}-${gi}`).style.width = pct + '%';
+    }, 50);
+  });
+
+  panel.classList.add('open');
+  setTimeout(() => panel.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+}
+
+// ── PROGRESS EDIT ────────────────────────────────
+function openProgEdit(key, gi) {
+  const r = returns.find(x => x.key === key);
+  const g = r.goals[gi];
+  editingGoal = { key, gi };
+  document.getElementById('pe-title').textContent = '更新进度：' + g.n;
+  document.getElementById('pe-done').value = g.done;
+  document.getElementById('pe-total').value = g.total;
+  document.getElementById('prog-overlay').classList.add('open');
+}
+function closeProgEdit(e) {
+  if (!e || e.target === document.getElementById('prog-overlay'))
+    document.getElementById('prog-overlay').classList.remove('open');
+}
+function saveProgEdit() {
+  if (!editingGoal) return;
+  const { key, gi } = editingGoal;
+  const r = returns.find(x => x.key === key);
+  const g = r.goals[gi];
+  g.done = Math.max(0, parseInt(document.getElementById('pe-done').value) || 0);
+  g.total = Math.max(1, parseInt(document.getElementById('pe-total').value) || 10);
+  const pct = Math.round(g.done / g.total * 100);
+  document.getElementById(`sgf-${key}-${gi}`).style.width = pct + '%';
+  document.querySelector(`#sgf-${key}-${gi}`).closest('.sg-row').querySelector('.sg-frac').textContent = g.done + '/' + g.total;
+  recalcReturn(key);
+  document.getElementById('prog-overlay').classList.remove('open');
+  showToast('进度已更新');
+}
+
+function recalcReturn(key) {
+  const r = returns.find(x => x.key === key);
+  const avg = r.goals.reduce((s, g) => s + (g.done / g.total), 0) / r.goals.length;
+  r.pct = Math.round(avg * 100);
+  document.getElementById('rp-' + key).textContent = r.pct + '%';
+  const offset = C - (r.pct / 100) * C;
+  document.getElementById('rf-' + key).style.strokeDashoffset = offset;
+  document.getElementById('dp-pct').textContent = r.pct + '%';
+}
+
+// ── REVIEW ──────────────────────────────────────
+function fillReview(t) {
+  const ta = document.getElementById('review-ta');
+  ta.value = t; ta.focus();
+}
+function submitReview() {
+  const ta = document.getElementById('review-ta');
+  if (!ta.value.trim()) return;
+  showToast('复盘已记录 · 请同步到 Notion 复盘数据库');
+  ta.value = '';
+}
+
+// ── CHECKINS ────────────────────────────────────
+const ciWrap = document.getElementById('checkins');
+checkinData.forEach((ci, i) => {
+  const div = document.createElement('div');
+  div.className = 'checkin-item';
+  div.id = 'ci-' + i;
+  div.innerHTML = `
+    <div class="ci-indicator" id="cid-${i}" style="background:${ci.done ? ci.color : '#D5D4CF'}"></div>
+    <div class="ci-label">${ci.label}</div>
+    <div class="ci-bar-bg"><div class="ci-bar-fill" id="cif-${i}" style="width:${ci.done?100:0}%;background:${ci.color}"></div></div>
+    <div class="ci-status" id="cis-${i}">${ci.done ? '✓' : '–'}</div>`;
+  div.onclick = () => toggleCI(i);
+  ciWrap.appendChild(div);
+});
+updateCombo();
+
+function toggleCI(i) {
+  checkinData[i].done = !checkinData[i].done;
+  const done = checkinData[i].done;
+  document.getElementById('cid-' + i).style.background = done ? checkinData[i].color : '#D5D4CF';
+  document.getElementById('cif-' + i).style.width = done ? '100%' : '0%';
+  document.getElementById('cis-' + i).textContent = done ? '✓' : '–';
+  const cbDots = ['cb-p','cb-c','cb-r'];
+  const el = document.getElementById(cbDots[i]);
+  if (done) { el.classList.add('lit'); el.style.background = '#FEF5E4'; el.style.borderColor = '#FAD896'; }
+  else { el.classList.remove('lit'); el.style.background = ''; el.style.borderColor = ''; }
+  updateCombo();
+}
+
+function updateCombo() {
+  const n = checkinData.filter(x => x.done).length;
+  const fire = document.getElementById('cb-fire');
+  const msg = document.getElementById('cb-msg');
+  fire.style.opacity = n === 3 ? '1' : '0.25';
+  fire.style.transform = n === 3 ? 'scale(1.15)' : 'scale(1)';
+  msg.textContent = n === 3 ? '今日火焰解锁！' : `还差 ${3 - n} 项`;
+}
+
+// ── HEATMAP ─────────────────────────────────────
+const pat = [0,1,2,0,3,2,1,'f',0,1,2,3,0,1,2,3,2,1,0,3,2,'f',1,0,2,3,1,2,3,0,1,2,'f',3,0,1,2,3,2,1,0,3,2,1,'f',0,3,2,1,0,3,2,1,0,2,3,'f',0,1,2,3,1,2,0,3,1,'f',2,0,3,1,2,'f',0,3,2,1,0,'f',2,3,0,1,'f',2,3,1,0,2,3,1];
+const hg = document.getElementById('hmap');
+pat.slice(0, 91).forEach(v => {
+  const c = document.createElement('div');
+  c.className = 'hc' + (v === 'f' ? ' lf' : v > 0 ? ' l' + v : '');
+  hg.appendChild(c);
+});
+
+// ── BRAINSTORM ──────────────────────────────────
+function submitIdea() {
+  const ta = document.getElementById('idea-ta');
+  if (!ta.value.trim()) return;
+  showToast('想法已记录 · 请同步到 Notion 灵感数据库');
+  ta.value = '';
+}
+
+// ── COVER EDIT ──────────────────────────────────
+// 双击封面三栏来编辑
+document.querySelectorAll('.id-card').forEach(c => {
+  c.ondblclick = () => openEdit();
+});
+function openEdit() {
+  document.getElementById('e-vision').value = document.getElementById('vision-txt').textContent;
+  document.getElementById('e-ideal').value  = document.getElementById('ideal-txt').textContent;
+  document.getElementById('e-mantra').value = document.getElementById('mantra-txt').textContent;
+  document.getElementById('edit-overlay').classList.add('open');
+}
+function closeEdit(e) {
+  if (!e || e.target === document.getElementById('edit-overlay'))
+    document.getElementById('edit-overlay').classList.remove('open');
+}
+function saveEdit() {
+  document.getElementById('vision-txt').textContent = document.getElementById('e-vision').value;
+  document.getElementById('ideal-txt').textContent  = document.getElementById('e-ideal').value;
+  document.getElementById('mantra-txt').textContent = document.getElementById('e-mantra').value;
+  document.getElementById('edit-overlay').classList.remove('open');
+  showToast('封面已更新');
+}
+
+// ── TOAST ───────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
